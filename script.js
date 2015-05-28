@@ -95,10 +95,26 @@ $.ajax({
 								var weapon = getWeaponByName(obj, weaponName);
 
 								if (weapon) {
-									var rarityName = getTranslation(translations, getSkinRarity(obj, obj.items[p].name, skinName, s));
+									var rarity = getSkinRarity(obj, obj.items[p].name, skinName, s);
+									var rarityName = getTranslation(translations, rarity);
 
 									if (rarityName) {
-										weaponsContainer.append('<p>' + getTranslation(translations, weapon.item_name) + ' - ' + getTranslation(translations, skin.description_tag) + ' - ' + rarityName + '</p>');
+
+										var searchTerm = getTranslation(translations, weapon.item_name) + ' | ' + getTranslation(translations, skin.description_tag) + ' (Battle-Scarred)';
+
+										if (false && (rarity == 'Rarity_Legendary_Weapon' || rarity == 'Rarity_Ancient_Weapon')) {
+											$.ajax({
+												url: 'http://steamcommunity.com/market/priceoverview/?currency=3&appid=730&market_hash_name=' + encodeURIComponent(searchTerm),
+												success: function (data) {
+													data = JSON.parse(data);
+													weaponsContainer.append('<p>' + getTranslation(translations, weapon.item_name) + ' | ' + getTranslation(translations, skin.description_tag) + ' - ' + rarityName + ' - Cheapest Price: $' + data.lowest_price + '</p>');
+												}
+											});
+										} else {
+											weaponsContainer.append('<p>' + getTranslation(translations, weapon.item_name) + ' | ' + getTranslation(translations, skin.description_tag) + ' - ' + rarityName + '</p>');
+										}
+
+										
 									}
 								}
 							}
